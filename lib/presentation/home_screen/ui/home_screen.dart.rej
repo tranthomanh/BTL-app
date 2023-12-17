@@ -1,0 +1,35 @@
+diff a/lib/presentation/home_screen/ui/home_screen.dart b/lib/presentation/home_screen/ui/home_screen.dart	(rejected hunks)
+@@ -579,21 +579,22 @@
+         ),
+         child: Row(
+           children: [
+-            if (userModel.avatarUrl != null)
+-              CircleAvatar(
+-                radius: 23, // Image radius
+-                backgroundImage: NetworkImage(userModel.avatarUrl ?? ''),
+-              )
+-            else
+-              CircleAvatar(
+-                radius: 23, // Image radius
+-                backgroundImage: MemoryImage(Uint8List(0)),
+-              ),
++            // if (userModel.avatarUrl != null)
++            //   CircleAvatar(
++            //     radius: 23, // Image radius
++            //     backgroundImage: NetworkImage(userModel.avatarUrl ?? ''),
++            //   )
++            // else
++            //   CircleAvatar(
++            //     radius: 23, // Image radius
++            //     backgroundImage: MemoryImage(Uint8List(0)),
++            //   ),
++            Icon(Icons.edit),
+             const SizedBox(
+               width: 10,
+             ),
+             Text(
+-              'What is on your mind ?',
++              'Bạn đang nghĩ gì?',
+               style: textStyle(size: 14),
+             ),
+           ],
