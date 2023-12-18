@@ -113,21 +113,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     controller: textTaiKhoanController,
                     suffixIcon: cubit.isHideClearData
                         ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {});
-                                  textTaiKhoanController.clear();
-                                  cubit.isHideClearData = false;
-                                },
-                                child: SvgPicture.asset(
-                                  ImageAssets.icClearLogin,
-                                ),
-                              ),
-                            ),
-                          )
+                      width: 20,
+                      height: 20,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {});
+                            textTaiKhoanController.clear();
+                            cubit.isHideClearData = false;
+                          },
+                          child: SvgPicture.asset(
+                            ImageAssets.icClearLogin,
+                          ),
+                        ),
+                      ),
+                    )
                         : const SizedBox(),
                     hintText: S.current.account,
                     prefixIcon: SizedBox(
@@ -155,24 +155,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     obscureText: cubit.isCheckEye1,
                     suffixIcon: cubit.isHideEye1
                         ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {});
-                                  cubit.isCheckEye1 = !cubit.isCheckEye1;
-                                },
-                                child: cubit.isCheckEye1
-                                    ? SvgPicture.asset(
-                                        ImageAssets.imgView,
-                                      )
-                                    : SvgPicture.asset(
-                                        ImageAssets.imgViewHide,
-                                      ),
-                              ),
-                            ),
+                      width: 20,
+                      height: 20,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {});
+                            cubit.isCheckEye1 = !cubit.isCheckEye1;
+                          },
+                          child: cubit.isCheckEye1
+                              ? SvgPicture.asset(
+                            ImageAssets.imgView,
                           )
+                              : SvgPicture.asset(
+                            ImageAssets.imgViewHide,
+                          ),
+                        ),
+                      ),
+                    )
                         : const SizedBox(),
                     hintText: S.current.password,
                     prefixIcon: SizedBox(
@@ -202,25 +202,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     obscureText: cubit.isCheckEyeXacNhan,
                     suffixIcon: cubit.isHideEyeXacNhan
                         ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {});
-                                  cubit.isCheckEyeXacNhan =
-                                      !cubit.isCheckEyeXacNhan;
-                                },
-                                child: cubit.isCheckEyeXacNhan
-                                    ? SvgPicture.asset(
-                                        ImageAssets.imgView,
-                                      )
-                                    : SvgPicture.asset(
-                                        ImageAssets.imgViewHide,
-                                      ),
-                              ),
-                            ),
+                      width: 20,
+                      height: 20,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {});
+                            cubit.isCheckEyeXacNhan =
+                            !cubit.isCheckEyeXacNhan;
+                          },
+                          child: cubit.isCheckEyeXacNhan
+                              ? SvgPicture.asset(
+                            ImageAssets.imgView,
                           )
+                              : SvgPicture.asset(
+                            ImageAssets.imgViewHide,
+                          ),
+                        ),
+                      ),
+                    )
                         : const SizedBox(),
                     hintText: S.current.xac_nhan_mat_khau,
                     prefixIcon: SizedBox(
@@ -251,26 +251,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     isColorBlue: true,
                     onPressed: () async {
                       if (keyGroup.currentState!.validator()) {
-                        final User? user = await cubit.signUp(
-                          textTaiKhoanController.text.trim(),
-                          textPasswordController.text.trim(),
-                        );
-
-                        if (user != null) {
-                          await Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => CreateUserScreen(
-                                cubit: cubit,
-                                email: user.email ?? '',
-                              ),
-                            ),
-                          );
-                        } else {
+                        final checkUser = await cubit.checkIfEmailInUse(
+                            textTaiKhoanController.text.trim());
+                        if (checkUser) {
                           _showToast(
-                            context: context,
-                            text: EXCEPTION_LOGIN,
-                          );
-                         }
+                              context: context, text: 'Tài khoản đã tồn tại!!');
+                        } else {
+                          // ignore: use_build_context_synchronously
+                          final isCheckDone =
+                          await pushToConfimOtp(context, textTaiKhoanController.text.trim());
+                          if (isCheckDone) {
+                            final User? user = await cubit.signUp(
+                              textTaiKhoanController.text.trim(),
+                              textPasswordController.text.trim(),
+                            );
+
+                            if (user != null) {
+                              await Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => CreateUserScreen(
+                                    cubit: cubit,
+                                    email: user.email ?? '',
+                                  ),
+                                ),
+                              );
+                            } else {
+                              _showToast(
+                                context: context,
+                                text: EXCEPTION_LOGIN,
+                              );
+                            }
+                          }
+                        }
                       } else {
                         _showToast(
                           context: context,

@@ -58,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: SingleChildScrollView(
                 child: Container(
                   padding:
-                      const EdgeInsets.only(top: 60, left: 16.0, right: 16.0),
+                  const EdgeInsets.only(top: 60, left: 16.0, right: 16.0),
                   child: FormGroup(
                     key: keyGroup,
                     child: Column(
@@ -99,22 +99,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                 controller: fullNameController,
                                 suffixIcon: loginCubit.isHideClearData
                                     ? SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Center(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {});
-                                              fullNameController.clear();
-                                              loginCubit.isHideClearData =
-                                                  false;
-                                            },
-                                            child: SvgPicture.asset(
-                                              ImageAssets.icClearLogin,
-                                            ),
-                                          ),
-                                        ),
-                                      )
+                                  width: 20,
+                                  height: 20,
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {});
+                                        fullNameController.clear();
+                                        loginCubit.isHideClearData =
+                                        false;
+                                      },
+                                      child: SvgPicture.asset(
+                                        ImageAssets.icClearLogin,
+                                      ),
+                                    ),
+                                  ),
+                                )
                                     : const SizedBox(),
                                 hintText: S.current.account,
                                 prefixIcon: SizedBox(
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height: 20.0,
                                   child: Center(
                                     child:
-                                        SvgPicture.asset(ImageAssets.imgAcount),
+                                    SvgPicture.asset(ImageAssets.imgAcount),
                                   ),
                                 ),
                                 onChange: (text) {
@@ -145,25 +145,25 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: loginCubit.isCheckEye1,
                                 suffixIcon: loginCubit.isHideEye1
                                     ? SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Center(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {});
-                                              loginCubit.isCheckEye1 =
-                                                  !loginCubit.isCheckEye1;
-                                            },
-                                            child: loginCubit.isCheckEye1
-                                                ? SvgPicture.asset(
-                                                    ImageAssets.imgView,
-                                                  )
-                                                : SvgPicture.asset(
-                                                    ImageAssets.imgViewHide,
-                                                  ),
-                                          ),
-                                        ),
+                                  width: 20,
+                                  height: 20,
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {});
+                                        loginCubit.isCheckEye1 =
+                                        !loginCubit.isCheckEye1;
+                                      },
+                                      child: loginCubit.isCheckEye1
+                                          ? SvgPicture.asset(
+                                        ImageAssets.imgView,
                                       )
+                                          : SvgPicture.asset(
+                                        ImageAssets.imgViewHide,
+                                      ),
+                                    ),
+                                  ),
+                                )
                                     : const SizedBox(),
                                 hintText: S.current.password,
                                 prefixIcon: SizedBox(
@@ -195,32 +195,52 @@ class _LoginScreenState extends State<LoginScreen> {
                                 isColorBlue: true,
                                 onPressed: () async {
                                   if (keyGroup.currentState!.validator()) {
-                                    final User? user = await loginCubit.lognIn(
-                                      fullNameController.text.trim(),
-                                      textPasswordController.text.trim(),
-                                    );
-                                    if (user != null) {
-                                      await PrefsService.saveUserId(user.uid);
-                                      if (loginCubit.isUserModel) {
-                                        await Navigator.of(context)
-                                            .pushReplacement(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                            const MainTabBarView(),
-                                          ),
+                                    bool checkUser =
+                                    await loginCubit.checkUserPassWord(
+                                        fullNameController.text.trim(),
+                                        textPasswordController.text.trim());
+                                    if (checkUser) {
+                                      final checkOtp = await pushToConfimOtp(
+                                          context,
+                                          fullNameController.text.trim());
+                                      if (checkOtp) {
+                                        final User? user =
+                                        await loginCubit.lognIn(
+                                          fullNameController.text.trim(),
+                                          textPasswordController.text.trim(),
                                         );
-                                      } else {
-                                        await Navigator.of(context)
-                                            .pushReplacement(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CreateUserScreen(
-                                                  email: user.email ?? '',
-                                                  cubit: SignUpCubit(),
-                                                ),
-                                          ),
-                                        );
+                                        if (user != null) {
+                                          await PrefsService.saveUserId(
+                                              user.uid);
+                                          if (loginCubit.isUserModel) {
+                                            await Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                const MainTabBarView(),
+                                              ),
+                                            );
+                                          } else {
+                                            await Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CreateUserScreen(
+                                                      email: user.email ?? '',
+                                                      cubit: SignUpCubit(),
+                                                    ),
+                                              ),
+                                            );
+                                          }
+                                        } else {
+                                          _showToast(
+                                            context: context,
+                                            text: EXCEPTION_LOGIN,
+                                          );
+                                        }
                                       }
+                                    }else{
+                                      _showToast(context: context,text: 'Tên tài khoản hoặc mật khẩu không đúng');
                                     }
                                   } else {
                                     _showToast(
@@ -242,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                const SignUpScreen(),
+                                            const SignUpScreen(),
                                           ),
                                         );
                                       },
